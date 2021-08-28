@@ -1,8 +1,0 @@
-syntax = "proto3";
-package helloworld;
-
-service Greeter { rpc SayHello(Request) returns (Reply); }
-
-message Request { string title = 1; }
-
-message Reply { string msg = 1; }

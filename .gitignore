@@ -2,5 +2,3 @@
 *.local
 target/
 node_modules/
-client/dist
-client/dist-ssr

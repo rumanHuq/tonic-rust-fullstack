@@ -6,9 +6,14 @@
   "version": "1.0.0",
   "description": "using grpc service",
   "scripts": {
-    "start": "npm start --workspace=client"
+    "build": "npm run build --workspace=client",
+    "eject": "npm run eject --workspace=client",
+    "lint": "npm run lint --workspace=client",
+    "lint:fix": "npm run lint:fix --workspace=client",
+    "start": "npm run start --workspace=client",
+    "test": "npm run test --workspace=client"
   },
   "keywords": [],
-  "author": "",
+  "author": "Majedul Hoque<rumanbsl@gmail.com>",
   "license": "ISC"
 }
