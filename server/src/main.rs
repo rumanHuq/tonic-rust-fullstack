@@ -1,7 +1,7 @@
 use tonic::{transport::Server, Request, Response, Status};
 
 use hello_world::greeter_server::{Greeter, GreeterServer};
-use hello_world::{HelloReply, HelloRequest};
+use hello_world::{Reply as HelloReply, Request as HelloRequest};
 
 pub mod hello_world {
   tonic::include_proto!("helloworld");
@@ -15,9 +15,11 @@ impl Greeter for MyGreeter {
   async fn say_hello(&self, request: Request<HelloRequest>) -> Result<Response<HelloReply>, Status> {
     println!("Got a request: {:?}", request);
 
-    let reply = hello_world::HelloReply {
-      message: format!("Hello {}!", request.into_inner().name).into(),
+    let reply = hello_world::Reply {
+      msg: format!("Hello {}!!", request.into_inner().title).into(),
     };
+
+    println!("{:#?}", reply);
 
     Ok(Response::new(reply))
   }
@@ -25,11 +27,12 @@ impl Greeter for MyGreeter {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-  let addr = "127.0.0.1:50051".parse()?;
-  let greeter = MyGreeter::default();
+  let addr = ([127, 0, 0, 1], 9999).into();
+  let greeter = GreeterServer::new(MyGreeter::default());
 
   Server::builder()
-    .add_service(GreeterServer::new(greeter))
+    .accept_http1(true)
+    .add_service(tonic_web::enable(greeter))
     .serve(addr)
     .await?;
 

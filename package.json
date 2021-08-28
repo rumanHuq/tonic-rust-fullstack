@@ -1,0 +1,14 @@
+{
+  "name": "tonic-demo",
+  "workspaces": [
+    "client"
+  ],
+  "version": "1.0.0",
+  "description": "using grpc service",
+  "scripts": {
+    "start": "npm start --workspace=client"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
