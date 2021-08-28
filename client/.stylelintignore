@@ -1,0 +1,15 @@
+.cache
+.vscode
+.next
+node_modules
+public
+static
+cache
+generated
+cypress
+src/styles/normalized.css
+src/**/**/*.d.ts
+src/**/**/*.test.ts
+
+coverage
+RestaurantSubpage

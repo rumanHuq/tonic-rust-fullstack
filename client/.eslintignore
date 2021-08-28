@@ -1,0 +1,7 @@
+node_modules
+src/Interfaces/generated
+coverage
+public
+dist
+src/reportWebVitals.ts
+src/setupTests.ts
