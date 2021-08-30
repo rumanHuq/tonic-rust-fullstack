@@ -34,14 +34,19 @@ pub struct ChatService {
 impl Chat for ChatService {
   type BroadcastStream = ReceiverStream<Result<Message, Status>>;
 
+  /* When a user joins, his transmission is saved in hashmap, whenever */
   async fn broadcast(&self, request: Request<chat::User>) -> Result<Response<Self::BroadcastStream>, Status> {
-    let (stream_tx, stream_rx) = mpsc::channel(1);
-    let (tx, mut rx) = mpsc::channel(1);
-
     let user_id = request.into_inner().id;
-    self.connections.write().await.senders.insert(user_id.clone(), tx);
+
+    if self.connections.read().await.senders.get(&user_id).is_some() {
+      return Err(Status::already_exists("user with id exists"));
+    }
+
+    let (tx, mut rx) = mpsc::channel(1);
+    self.connections.write().await.senders.insert(user_id, tx); /* saving transmitter of every user */
 
     let connections_clone = self.connections.clone();
+    let (stream_tx, stream_rx) = mpsc::channel(1);
 
     tokio::spawn(async move {
       while let Some(msg) = rx.recv().await {
@@ -59,9 +64,11 @@ impl Chat for ChatService {
     result
   }
   async fn send_message(&self, request: Request<Message>) -> Result<Response<Empty>, Status> {
-    let req_data = request.into_inner();
-    let id = req_data.id;
-    let content = req_data.content;
+    let Message { id, content } = request.into_inner();
+
+    if self.connections.read().await.senders.get(&id).is_none() {
+      return Err(Status::not_found("user with id does not exist"));
+    }
     let msg = Message { id, content };
     self.connections.read().await.broadcast(msg).await;
 
