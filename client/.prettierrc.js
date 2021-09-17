@@ -7,5 +7,5 @@ module.exports = {
   quoteProps: 'as-needed',
   jsxSingleQuote: false,
   bracketSpacing: true,
-  printWidth: 180,
+  printWidth: 140,
 }
