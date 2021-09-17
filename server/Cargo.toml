@@ -12,3 +12,6 @@ tonic-web    = "0.1.0"
 
 [build-dependencies]
 tonic-build = "0.5"
+
+[dev-dependencies]
+pretty_assertions = "0.7.2"

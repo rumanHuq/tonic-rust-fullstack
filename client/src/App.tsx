@@ -1,31 +1,20 @@
-import { useEffect } from "react";
-import { ChatClient } from "./Interfaces/generated/chat_grpc_web_pb";
-import { User, Message } from "./Interfaces/generated/chat_pb";
+import { useEffect, useState } from "react";
+import AppCss from "./App.module.scss";
 
-const echoService = new ChatClient("http://127.0.0.1:9999", null, null);
-
-const message = new Message();
-message.setId(1);
-message.setContent("hello");
-
-const user = new User();
-user.setId(1);
-user.setName("Ruman");
-
-const call = echoService.broadcast(user);
-call.on("status", (status) => {
-  console.log(status);
-});
-
-call.on("data", (r) => {
-  console.log(r.toObject());
-});
+function useDarkMode() {
+  const [darkMode, setDarkMode] = useState(false);
+  useEffect(() => {
+    setDarkMode(window?.matchMedia?.("(prefers-color-scheme: dark)").matches || false);
+  }, []);
+  return darkMode;
+}
 
 export default function App() {
-  useEffect(() => {
-    echoService.sendMessage(message, undefined, () => {
-      /*  */
-    });
-  });
-  return <div>hello!</div>;
+  const isDarkMode = useDarkMode();
+  const theme = isDarkMode ? "dark" : "light";
+  return (
+    <section className={AppCss[`${theme}-app-container`]}>
+      <nav>aaa</nav>
+    </section>
+  );
 }

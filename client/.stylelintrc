@@ -1,7 +1,6 @@
 {
   "extends": [
     "stylelint-config-sass-guidelines",
-    "stylelint-config-styled-components",
     "stylelint-prettier/recommended"
   ],
   "rules": {
