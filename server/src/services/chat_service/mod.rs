@@ -7,18 +7,18 @@ use tokio::sync::{mpsc, RwLock};
 use tokio_stream::wrappers::ReceiverStream;
 use tonic::{Request, Response, Status};
 
+type SenderId = i32;
 #[derive(Debug, Default)]
 struct Connections {
-	senders: HashMap<i32, mpsc::Sender<Message>>, /* <user_id i32, Message> */
+	senders: HashMap<SenderId, mpsc::Sender<Message>>,
 }
-
 impl Connections {
 	async fn broadcast(&self, msg: Message) {
-		for (user_id, tx) in &self.senders {
+		for (sender_id, tx) in &self.senders {
 			match tx.send(msg.clone()).await {
 				Ok(_) => {}
 				Err(_) => {
-					println!("[Broadcast] SendError: to {}, {:?}", user_id, msg)
+					println!("[Broadcast] SendError: to {}, {:?}", sender_id, msg)
 				}
 			}
 		}
@@ -36,14 +36,14 @@ impl Chat for ChatService {
 
 	/* When a user joins, his transmission is saved in hashmap, whenever */
 	async fn broadcast(&self, request: Request<chat::User>) -> Result<Response<Self::BroadcastStream>, Status> {
-		let user_id = request.into_inner().id;
+		let sender_id = request.into_inner().id;
 
-		if self.connections.read().await.senders.get(&user_id).is_some() {
+		if self.connections.read().await.senders.get(&sender_id).is_some() {
 			return Err(Status::already_exists("user with id exists"));
 		}
 
 		let (tx, mut rx) = mpsc::channel(1);
-		self.connections.write().await.senders.insert(user_id, tx); /* saving transmitter of every user */
+		self.connections.write().await.senders.insert(sender_id, tx); /* saving transmitter of every user */
 
 		let connections_clone = self.connections.clone();
 		let (stream_tx, stream_rx) = mpsc::channel(1);
@@ -54,8 +54,8 @@ impl Chat for ChatService {
 					Ok(_) => {}
 					Err(_) => {
 						// If sending failed, then remove the user from shared data
-						println!("[Remote] stream tx sending error. Remote {}", &user_id);
-						connections_clone.write().await.senders.remove(&user_id);
+						println!("[Remote] stream tx sending error. Remote {}", &sender_id);
+						connections_clone.write().await.senders.remove(&sender_id);
 					}
 				}
 			}

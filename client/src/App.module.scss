@@ -1,19 +1,15 @@
-@function color($color-name) {
- @return var(--#{$color-name});
-}
-
 .app-container {
- min-height: 100vh;
+  min-height: 100vh;
 }
 
 .dark-app-container {
- background-color: #000;
- color: #fff;
- composes: app-container;
+  background-color: #000;
+  color: #fff;
+  composes: app-container;
 }
 
 .light-app-container {
- background-color: #fff;
- color: #000;
- composes: app-container;
+  background-color: #fff;
+  color: #000;
+  composes: app-container;
 }

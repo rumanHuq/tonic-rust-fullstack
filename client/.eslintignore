@@ -5,3 +5,4 @@ public
 dist
 src/reportWebVitals.ts
 src/setupTests.ts
+build
